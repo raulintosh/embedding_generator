@@ -61,6 +61,7 @@ defmodule EmbeddingGenerator.MixProject do
 
       # Added dependencies for embedding generation
       {:oban, "~> 2.17"},
+      {:oban_web, "~> 2.13"},
       {:ex_aws, "~> 2.5"},
       {:ex_aws_s3, "~> 2.5"},
       {:hackney, "~> 1.18"},

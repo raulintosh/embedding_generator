@@ -67,6 +67,12 @@ config :embedding_generator, Oban,
   plugins: [Oban.Plugins.Pruner],
   queues: [embeddings: 10]
 
+# ObanWeb configuration
+config :oban_web,
+  repo: EmbeddingGenerator.Repo,
+  prefix: "oban_jobs",
+  oban_name: Oban
+
 # Configure batch processing
 config :embedding_generator, EmbeddingGenerator.BatchProcessor,
   # Default batch size, can be overridden at runtime
