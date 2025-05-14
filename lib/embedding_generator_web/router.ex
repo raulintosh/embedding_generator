@@ -33,14 +33,23 @@ defmodule EmbeddingGeneratorWeb.Router do
     # you can use Plug.BasicAuth to set up some basic authentication
     # as long as you are also using SSL (which you should anyway).
     import Phoenix.LiveDashboard.Router
-    import ObanWeb.Router
 
     scope "/dev" do
       pipe_through :browser
 
       live_dashboard "/dashboard", metrics: EmbeddingGeneratorWeb.Telemetry
       forward "/mailbox", Plug.Swoosh.MailboxPreview
-      oban_dashboard("/oban")
+    end
+
+    # Add ObanWeb dashboard in development
+    if Mix.env() == :dev do
+      scope "/dev" do
+        pipe_through [:browser]
+
+        forward "/oban", ObanWeb.Plug,
+          oban_name: Oban,
+          repo: EmbeddingGenerator.Repo
+      end
     end
   end
 end
