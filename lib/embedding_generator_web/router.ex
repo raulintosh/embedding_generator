@@ -39,17 +39,11 @@ defmodule EmbeddingGeneratorWeb.Router do
 
       live_dashboard "/dashboard", metrics: EmbeddingGeneratorWeb.Telemetry
       forward "/mailbox", Plug.Swoosh.MailboxPreview
-    end
 
-    # Add ObanWeb dashboard in development
-    if Mix.env() == :dev do
-      scope "/dev" do
-        pipe_through [:browser]
-
-        forward "/oban", ObanWeb.Plug,
-          oban_name: Oban,
-          repo: EmbeddingGenerator.Repo
-      end
+      # Add ObanWeb dashboard
+      forward "/oban", ObanWeb.Plug,
+        oban_name: Oban,
+        repo: EmbeddingGenerator.Repo
     end
   end
 end
