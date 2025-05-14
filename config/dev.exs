@@ -1,14 +1,47 @@
 import Config
 
 # Configure your database
+# Use environment variables if available, otherwise use defaults
 config :embedding_generator, EmbeddingGenerator.Repo,
-  username: "postgres",
-  password: "postgres",
-  hostname: "localhost",
-  database: "embedding_generator_dev",
+  username: System.get_env("DO_DB_USERNAME") || "postgres",
+  password: System.get_env("DO_DB_PASSWORD") || "postgres",
+  hostname: System.get_env("DO_DB_HOSTNAME") || "localhost",
+  port: String.to_integer(System.get_env("DO_DB_PORT") || "5432"),
+  database: System.get_env("DO_DB_NAME") || "embedding_generator_dev",
+  ssl: System.get_env("DO_DB_SSL_CERT") != nil,
+  ssl_opts:
+    if(System.get_env("DO_DB_SSL_CERT"),
+      do: [cacertfile: System.get_env("DO_DB_SSL_CERT")],
+      else: []
+    ),
   stacktrace: true,
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
+
+# Digital Ocean Spaces configuration (if environment variables are set)
+if System.get_env("SPACES_ACCESS_KEY_ID") do
+  config :ex_aws,
+    access_key_id: System.get_env("SPACES_ACCESS_KEY_ID"),
+    secret_access_key: System.get_env("SPACES_SECRET_ACCESS_KEY")
+
+  config :ex_aws, :s3,
+    scheme: "https://",
+    host: "#{System.get_env("BUCKET_NAME")}.nyc3.digitaloceanspaces.com",
+    region: "nyc3"
+end
+
+# Oban configuration based on environment variable
+if System.get_env("ENABLE_OBAN") == "true" do
+  config :embedding_generator, Oban, queues: [embeddings: 10], plugins: [Oban.Plugins.Pruner]
+else
+  config :embedding_generator, Oban, queues: false, plugins: false
+end
+
+# Allow batch size to be configured via environment variable
+if batch_size = System.get_env("EMBEDDING_BATCH_SIZE") do
+  config :embedding_generator, EmbeddingGenerator.BatchProcessor,
+    batch_size: String.to_integer(batch_size)
+end
 
 # For development, we disable any cache and enable
 # debugging and code reloading.
