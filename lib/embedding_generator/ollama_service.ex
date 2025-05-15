@@ -1,8 +1,8 @@
 defmodule EmbeddingGenerator.OllamaService do
   require Logger
 
-  @base_url "http://localhost:11434"
-  @model "llama3.2-vision"
+  @base_url "http://127.0.0.1:11434"
+  @model "llama3.2-vision:latest"
 
   def generate_embedding(image_base64) do
     Logger.info("Generating embedding using Ollama model: #{@model}")
