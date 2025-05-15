@@ -19,6 +19,8 @@ defmodule EmbeddingGenerator.Application do
       # {EmbeddingGenerator.Worker, arg},
       # Start Oban for background job processing
       {Oban, Application.fetch_env!(:embedding_generator, Oban)},
+      # Start ObanWeb for the dashboard
+      {ObanWeb, oban_name: Oban},
       # Start to serve requests, typically the last entry
       EmbeddingGeneratorWeb.Endpoint
     ]

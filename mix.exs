@@ -19,7 +19,7 @@ defmodule EmbeddingGenerator.MixProject do
   def application do
     [
       mod: {EmbeddingGenerator.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger, :runtime_tools, :oban]
     ]
   end
 

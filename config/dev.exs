@@ -30,12 +30,8 @@ if System.get_env("SPACES_ACCESS_KEY_ID") do
     region: "nyc3"
 end
 
-# Oban configuration based on environment variable
-if System.get_env("ENABLE_OBAN") == "true" do
-  config :embedding_generator, Oban, queues: [embeddings: 10], plugins: [Oban.Plugins.Pruner]
-else
-  config :embedding_generator, Oban, queues: false, plugins: false
-end
+# Oban configuration - always enabled for development
+config :embedding_generator, Oban, queues: [embeddings: 10], plugins: [Oban.Plugins.Pruner]
 
 # Allow batch size to be configured via environment variable
 if batch_size = System.get_env("EMBEDDING_BATCH_SIZE") do
