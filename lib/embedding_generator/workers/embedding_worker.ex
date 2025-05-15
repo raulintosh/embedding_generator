@@ -63,20 +63,7 @@ defmodule EmbeddingGenerator.Workers.EmbeddingWorker do
     end
   end
 
-  @doc """
-  Processes a single image by downloading it, generating an embedding, and updating the database.
-
-  ## Parameters
-
-  - `image`: The image record from the database
-  - `image_id`: The UUID of the image (for logging)
-  - `start_time`: The start time of the overall process (for timing)
-
-  ## Returns
-
-  - `:ok` if successful
-  - `{:error, reason}` if failed
-  """
+  # Processes a single image by downloading it, generating an embedding, and updating the database.
   defp process_single_image(image, image_id, start_time) do
     try do
       # Download image from S3
@@ -90,7 +77,7 @@ defmodule EmbeddingGenerator.Workers.EmbeddingWorker do
 
       if binary_size == 0 do
         Logger.error("Downloaded image is empty (0 bytes)")
-        return({:error, :empty_image})
+        {:error, :empty_image}
       end
 
       # Convert to base64
@@ -116,7 +103,7 @@ defmodule EmbeddingGenerator.Workers.EmbeddingWorker do
 
       if embedding_size == 0 do
         Logger.error("Generated embedding is empty (0 dimensions)")
-        return({:error, :empty_embedding})
+        {:error, :empty_embedding}
       end
 
       # Update image record with embedding
@@ -165,7 +152,7 @@ defmodule EmbeddingGenerator.Workers.EmbeddingWorker do
       e ->
         Logger.error("Exception while processing image #{image_id}: #{Exception.message(e)}")
         Logger.debug("Exception details: #{inspect(e)}")
-        Logger.debug("Stacktrace: #{inspect(System.stacktrace())}")
+        Logger.debug("Stacktrace: #{inspect(__STACKTRACE__)}")
         {:error, {:exception, Exception.message(e)}}
     end
   end

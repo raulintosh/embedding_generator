@@ -45,6 +45,7 @@ defmodule EmbeddingGenerator.S3Service do
           |> ExAws.request()
 
         download_duration = System.monotonic_time(:millisecond) - download_start_time
+        Logger.debug("S3 API request completed in #{download_duration}ms")
 
         case response do
           {:ok, %{body: image_binary, status_code: 200}} ->
@@ -55,7 +56,7 @@ defmodule EmbeddingGenerator.S3Service do
             Logger.debug("Content type: #{get_content_type(path)}")
 
             if size == 0 do
-              Logger.warn("Downloaded file is empty (0 bytes)")
+              Logger.warning("Downloaded file is empty (0 bytes)")
             end
 
             {:ok, image_binary}
@@ -111,17 +112,7 @@ defmodule EmbeddingGenerator.S3Service do
     path
   end
 
-  @doc """
-  Determines the content type based on the file extension.
-
-  ## Parameters
-
-  - `path`: The path to the file
-
-  ## Returns
-
-  - String representing the MIME type
-  """
+  # Determines the content type based on the file extension.
   defp get_content_type(path) do
     extension =
       path

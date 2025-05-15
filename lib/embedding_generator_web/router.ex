@@ -1,6 +1,5 @@
 defmodule EmbeddingGeneratorWeb.Router do
   use EmbeddingGeneratorWeb, :router
-  import Oban.Web.Router
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -41,8 +40,10 @@ defmodule EmbeddingGeneratorWeb.Router do
       live_dashboard "/dashboard", metrics: EmbeddingGeneratorWeb.Telemetry
       forward "/mailbox", Plug.Swoosh.MailboxPreview
 
-      # Observability routes
-      oban_dashboard("/oban")
+      # Add ObanWeb dashboard
+      forward "/oban", ObanWeb.Plug,
+        oban_name: Oban,
+        repo: EmbeddingGenerator.Repo
     end
   end
 end

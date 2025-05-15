@@ -99,7 +99,7 @@ defmodule EmbeddingGenerator.Workers.BatchEmbeddingWorker do
         end)
         |> Enum.map(fn {:error, id, _, _} -> id end)
 
-      Logger.warn("Failed image IDs: #{inspect(failed_ids)}")
+      Logger.warning("Failed image IDs: #{inspect(failed_ids)}")
     end
 
     # Schedule next batch if there are more images to process
@@ -117,18 +117,7 @@ defmodule EmbeddingGenerator.Workers.BatchEmbeddingWorker do
     :ok
   end
 
-  @doc """
-  Processes a single image by downloading it, generating an embedding, and updating the database.
-
-  ## Parameters
-
-  - `image_id`: The UUID of the image to process
-
-  ## Returns
-
-  - `:ok` if successful
-  - `{:error, reason}` if failed
-  """
+  # Processes a single image by downloading it, generating an embedding, and updating the database.
   defp process_image(image_id) do
     Logger.debug("Fetching image #{image_id} from database")
 
@@ -153,7 +142,7 @@ defmodule EmbeddingGenerator.Workers.BatchEmbeddingWorker do
 
           if binary_size == 0 do
             Logger.error("Downloaded image is empty (0 bytes)")
-            return({:error, :empty_image})
+            {:error, :empty_image}
           end
 
           # Convert to base64
@@ -179,7 +168,7 @@ defmodule EmbeddingGenerator.Workers.BatchEmbeddingWorker do
 
           if embedding_size == 0 do
             Logger.error("Generated embedding is empty (0 dimensions)")
-            return({:error, :empty_embedding})
+            {:error, :empty_embedding}
           end
 
           # Update image record with embedding
@@ -194,7 +183,7 @@ defmodule EmbeddingGenerator.Workers.BatchEmbeddingWorker do
           update_duration = System.monotonic_time(:millisecond) - update_start
 
           case result do
-            {:ok, updated} ->
+            {:ok, _updated} ->
               Logger.debug("Updated image record in #{update_duration}ms")
               :ok
 
@@ -207,7 +196,7 @@ defmodule EmbeddingGenerator.Workers.BatchEmbeddingWorker do
           e ->
             Logger.error("Exception while processing image #{image_id}: #{Exception.message(e)}")
             Logger.debug("Exception details: #{inspect(e)}")
-            Logger.debug("Stacktrace: #{inspect(System.stacktrace())}")
+            Logger.debug("Stacktrace: #{inspect(__STACKTRACE__)}")
             {:error, {:exception, Exception.message(e)}}
         end
     end
