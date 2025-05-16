@@ -9,7 +9,7 @@ defmodule EmbeddingGenerator.Schema.Image do
     field :latitude, :float
     field :user_id, :integer
     field :s3_url, :string
-    field :embedding, EmbeddingGenerator.Types.Vector
+    field :embedding, Pgvector.Ecto.Vector
 
     timestamps()
   end

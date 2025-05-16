@@ -78,6 +78,8 @@ config :embedding_generator, EmbeddingGenerator.BatchProcessor,
   # Default batch size, can be overridden at runtime
   batch_size: 5
 
+config :embedding_generator, EmbeddingGenerator.Repo, types: EmbeddingGenerator.PostgrexTypes
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{config_env()}.exs"

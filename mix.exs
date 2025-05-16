@@ -66,7 +66,8 @@ defmodule EmbeddingGenerator.MixProject do
       {:ex_aws_s3, "~> 2.5"},
       {:hackney, "~> 1.18"},
       {:sweet_xml, "~> 0.7"},
-      {:igniter, "~> 0.5", only: [:dev]}
+      {:igniter, "~> 0.5", only: [:dev]},
+      {:pgvector, "~> 0.3.0"}
     ]
   end
 
