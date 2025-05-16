@@ -1,5 +1,6 @@
 defmodule EmbeddingGeneratorWeb.Router do
   use EmbeddingGeneratorWeb, :router
+
   import Oban.Web.Router
 
   pipeline :browser do
@@ -42,7 +43,12 @@ defmodule EmbeddingGeneratorWeb.Router do
       forward "/mailbox", Plug.Swoosh.MailboxPreview
 
       # Add ObanWeb dashboard
-      # Observability routes
+      forward "/oban", ObanWeb, oban_name: Oban
+    end
+
+    scope "/" do
+      pipe_through :browser
+
       oban_dashboard("/oban")
     end
   end
